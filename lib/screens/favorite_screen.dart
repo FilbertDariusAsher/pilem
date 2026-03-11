@@ -44,33 +44,46 @@ class FavoriteScreenState extends State<FavoriteScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Favorite Movies')),
-      body: ListView.builder(
-        itemCount: _favoriteMovies.length,
-        itemBuilder: (context, index) {
-          final Movie movie = _favoriteMovies[index];
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
-            child: ListTile(
-              leading: Image.network(
-                'https://image.tmdb.org/t/p/w500${movie.posterPath}',
-                height: 150,
-                width: 100,
-                fit: BoxFit.cover,
+      backgroundColor: Colors.tealAccent,
+      appBar: AppBar(
+        title: const Text('Favorite Movies'),
+        backgroundColor: Colors.tealAccent,
+      ),
+      body: _favoriteMovies.isEmpty
+          ? const Center(
+              child: Text(
+                'Belum ada film yang difavoritkan.',
+                style: TextStyle(fontSize: 18, color: Colors.black),
+                textAlign: TextAlign.center,
               ),
-              title: Text(movie.title),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => DetailScreen(movie: movie),
+            )
+          : ListView.builder(
+              itemCount: _favoriteMovies.length,
+              itemBuilder: (context, index) {
+                final Movie movie = _favoriteMovies[index];
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: ListTile(
+                    leading: Image.network(
+                      'https://image.tmdb.org/t/p/w500${movie.posterPath}',
+                      height: 50,
+                      width: 50,
+                      fit: BoxFit.cover,
+                    ),
+                    title: Text(movie.title),
+                    onTap: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DetailScreen(movie: movie),
+                        ),
+                      );
+                      await _loadFavoriteMovies();
+                    },
                   ),
                 );
               },
             ),
-          );
-        },
-      ),
     );
   }
 }

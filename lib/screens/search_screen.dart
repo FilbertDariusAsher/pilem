@@ -42,7 +42,11 @@ class SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Search')),
+      backgroundColor: Colors.tealAccent,
+      appBar: AppBar(
+        title: const Text('Search'),
+        backgroundColor: Colors.tealAccent,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -50,7 +54,7 @@ class SearchScreenState extends State<SearchScreen> {
             Container(
               padding: const EdgeInsets.all(8.0),
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey, width: 1.0),
+                border: Border.all(color: Colors.black, width: 1.0),
                 borderRadius: BorderRadius.circular(5.0),
               ),
               child: Row(

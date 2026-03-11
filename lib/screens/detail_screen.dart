@@ -49,7 +49,11 @@ class _DetailScreenState extends State<DetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.movie.title)),
+      backgroundColor: Colors.tealAccent,
+      appBar: AppBar(
+        title: Text(widget.movie.title),
+        backgroundColor: Colors.tealAccent,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: SingleChildScrollView(

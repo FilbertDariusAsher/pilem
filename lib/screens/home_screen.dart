@@ -39,7 +39,11 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Pilem')),
+      appBar: AppBar(
+        title: const Text('Pilem'),
+        backgroundColor: Colors.tealAccent,
+      ),
+      backgroundColor: Colors.tealAccent,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
