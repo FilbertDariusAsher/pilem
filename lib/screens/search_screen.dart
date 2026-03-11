@@ -1,70 +1,121 @@
 import 'package:flutter/material.dart';
-import '../models/movie.dart';
-import '../services/api_services.dart';
-import 'detail_screen.dart';
+import 'package:pilem/models/movie.dart';
+import 'package:pilem/screens/detail_screen.dart';
+import 'package:pilem/services/api_services.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
-
   @override
-  State<SearchScreen> createState() => _SearchScreenState();
+  SearchScreenState createState() => SearchScreenState();
 }
 
-class _SearchScreenState extends State<SearchScreen> {
+class SearchScreenState extends State<SearchScreen> {
   final ApiService _apiService = ApiService();
-  List<Movie> _movies = [];
-  final TextEditingController _controller = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
+  List<Movie> _searchResults = [];
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(_searchMovies);
+  }
 
-  void _search() async {
-    final results = await _apiService.searchMovies(_controller.text);
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
+  void _searchMovies() async {
+    if (_searchController.text.isEmpty) {
+      setState(() {
+        _searchResults.clear();
+      });
+      return;
+    }
+    final List<Map<String, dynamic>> searchData = await _apiService
+        .searchMovies(_searchController.text);
     setState(() {
-      _movies = results.map((e) => Movie.fromJson(e)).toList();
+      _searchResults = searchData.map((e) => Movie.fromJson(e)).toList();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // removed outer scaffold; only return the content
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8),
-          child: Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _controller,
-                  decoration: const InputDecoration(hintText: "Search..."),
-                ),
+    return Scaffold(
+      appBar: AppBar(title: const Text('Search')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey, width: 1.0),
+                borderRadius: BorderRadius.circular(5.0),
               ),
-              IconButton(icon: const Icon(Icons.search), onPressed: _search),
-            ],
-          ),
-        ),
-        Expanded(
-          child: ListView.builder(
-            itemCount: _movies.length,
-            itemBuilder: (context, index) {
-              final movie = _movies[index];
-              return ListTile(
-                leading: Image.network(
-                  'https://image.tmdb.org/t/p/w200${movie.posterPath}',
-                ),
-                title: Text(movie.title),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => DetailScreen(movie: movie),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _searchController,
+                      decoration: const InputDecoration(
+                        hintText: 'Search movies...',
+                        border: InputBorder.none,
+                      ),
+                    ),
+                  ),
+                  Visibility(
+                    visible: _searchController.text.isNotEmpty,
+                    child: IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        _searchController.clear();
+                        setState(() {
+                          _searchResults.clear();
+                        });
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+            Expanded(
+              child: ListView.builder(
+                itemCount: _searchResults.length,
+                itemBuilder: (context, index) {
+                  final Movie movie = _searchResults[index];
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: ListTile(
+                      leading: movie.posterPath.isNotEmpty
+                          ? Image.network(
+                              'https://image.tmdb.org/t/p/w500${movie.posterPath}',
+                              height: 50,
+                              width: 50,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return const Icon(Icons.movie, size: 40);
+                              },
+                            )
+                          : const Icon(Icons.movie, size: 40),
+                      title: Text(movie.title),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DetailScreen(movie: movie),
+                          ),
+                        );
+                      },
                     ),
                   );
                 },
-              );
-            },
-          ),
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

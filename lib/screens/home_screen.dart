@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pilem/models/movie.dart';
 import 'package:pilem/services/api_services.dart';
-import 'detail_screen.dart';
-import 'favorite_screen.dart';
-import 'search_screen.dart';
+import 'package:pilem/screens/detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -16,10 +14,6 @@ class HomeScreenState extends State<HomeScreen> {
   List<Movie> _allMovies = [];
   List<Movie> _trendingMovies = [];
   List<Movie> _popularMovies = [];
-
-  // track which bottom navigation item is selected
-  int _selectedIndex = 0;
-
   @override
   void initState() {
     super.initState();
@@ -42,46 +36,19 @@ class HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  Widget _buildHomeContent() {
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildMoviesList('All Movies', _allMovies),
-          _buildMoviesList('Trending Movies', _trendingMovies),
-          _buildMoviesList('Popular Movies', _popularMovies),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    // pages shown by the bottom navigation bar
-    final List<Widget> pages = [
-      _buildHomeContent(),
-      const SearchScreen(),
-      const FavoriteScreen(),
-    ];
-
     return Scaffold(
       appBar: AppBar(title: const Text('Pilem')),
-      body: pages[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
-            label: 'Favorites',
-          ),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildMoviesList('All Movies', _allMovies),
+            _buildMoviesList('Trending Movies', _trendingMovies),
+            _buildMoviesList('Popular Movies', _popularMovies),
+          ],
+        ),
       ),
     );
   }
